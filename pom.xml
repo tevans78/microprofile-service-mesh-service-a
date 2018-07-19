@@ -120,6 +120,8 @@
                 <app.location>${project.artifactId}.war</app.location>
                 <default.http.port>${testServerHttpPort}</default.http.port>
                 <default.https.port>${testServerHttpsPort}</default.https.port>
+                <svcBHost>localhost</svcBHost>
+                <svcBPort>9080</svcBPort>
               </bootstrapProperties>
               <looseApplication>false</looseApplication>
             </configuration>

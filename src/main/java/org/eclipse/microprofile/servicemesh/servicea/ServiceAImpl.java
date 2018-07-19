@@ -27,24 +27,46 @@ package org.eclipse.microprofile.servicemesh.servicea;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+
+import org.eclipse.microprofile.faulttolerance.Fallback;
+import org.eclipse.microprofile.servicemesh.common.CallCounter;
 
 @RequestScoped
-@Path("serviceA")
-public class ServiceAEndpoint {
+public class ServiceAImpl implements ServiceA {
 
     @Inject
-    private ServiceA serviceA;
+    ServiceBClientImpl serviceBClient;
+    
+    @Inject
+    CallCounter callCounter;
+    
+    @Fallback(fallbackMethod = "fallback")
+    public ServiceData call() throws Exception {
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public ServiceData callServiceA() throws Exception {
+        int callCount = callCounter.increment();
+        
+        ServiceData serviceBData = serviceBClient.callServiceB();
 
-        ServiceData data = serviceA.call();
+        ServiceData data = new ServiceData();
+        data.setSource(this.toString());
+        data.setMessage("Hello from serviceA");
+        data.setData(serviceBData);
+        data.setCallCount(callCount);
+        data.setTries(serviceBClient.getTries());
+        
+        return data;
+    }
+    
+    public ServiceData fallback() {
+        
+        ServiceData data = new ServiceData();
+        data.setSource(this.toString());
+        data.setCallCount(0);
+        data.setMessage("serviceA fallback");
+        data.setTries(serviceBClient.getTries());
+        data.setFallback(true);
 
         return data;
     }
+    
 }

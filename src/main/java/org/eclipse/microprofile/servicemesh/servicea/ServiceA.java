@@ -17,20 +17,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Contributors:
- *   2018-06-19 - Jon Hawkes / IBM Corp
- *      Initial code
- *
  *******************************************************************************/
 
-package it;
+package org.eclipse.microprofile.servicemesh.servicea;
 
-import org.junit.Test;
+public interface ServiceA {
 
-public class ServiceAEndpointTest extends EndpointTest {
-
-    @Test
-    public void testDeployment() {
-      testEndpoint("/mp-servicemesh-sample/serviceA", 200, "fallback");
-    }
+    public ServiceData call() throws Exception;
 }
